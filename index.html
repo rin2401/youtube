@@ -129,8 +129,12 @@
                 })
                 .catch((error) => console.error(error));
         }
+
         var urlParams = new URLSearchParams(window.location.search);
         var id = urlParams.get('v');
+        if (!id) {
+            window.location.href += "?v=5MuIMqhT8DM";
+        }
         showVideo(id);
         getTranscript(id);
     </script>
