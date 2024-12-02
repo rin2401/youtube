@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Youtube</title>
+    <style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f4;
+        padding: 20px;
+        height: 100vh;
+    }
+
+    .container {
+        display: flex;
+        justify-content: space-between;
+        gap: 20px;
+        height: 100%;
+    }
+
+    #video-container {
+        flex: 1;
+        max-width: 50%;
+    }
+
+    #transcript-container {
+        flex: 1;
+        max-width: 50%;
+        background-color: #fff;
+        padding: 15px;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        overflow-y: auto;
+    }
+
+    .caption-line {
+            cursor: pointer;
+            padding: 5px;
+            margin-bottom: 10px;
+            transition: background-color 0.2s;
+        }
+
+    .caption-line:hover {
+        background-color: #ddd;
+    }
+
+    h2 {
+        margin-bottom: 15px;
+        color: #333;
+    }
+
+    p {
+        line-height: 1.6;
+        margin-bottom: 10px;
+    }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- YouTube Video -->
+        <div id="video-container">
+            <iframe id="video" width="100%" height="500px" 
+                src="" 
+                title="YouTube video player" frameborder="0" 
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                allowfullscreen>
+            </iframe>
+        </div>
+
+        <!-- Transcript Section -->
+        <div id="transcript-container">
+        </div>
+    </div>
+    <script>
+        function showVideo(id) {
+            var video = document.getElementById('video');
+            video.src = "https://www.youtube.com/embed/" + id + "?autoplay=1";
+        }
+
+        function getTranscript(id) {
+            const myHeaders = new Headers();
+                myHeaders.append("content-type", "application/json");
+                const raw = JSON.stringify({
+                    "videoUrl": "https://www.youtube.com/watch?v=" + id,
+                    "langCode": "en"
+                });
+
+                const requestOptions = {
+                    method: "POST",
+                    headers: myHeaders,
+                    body: raw,
+                    redirect: "follow"
+                };
+
+                fetch("https://cors-nl0i.onrender.com/https://tactiq-apps-prod.tactiq.io/transcript", requestOptions)
+                .then((response) => response.text())
+                .then((result) => {
+                    data = JSON.parse(result)
+                    console.log(data)
+                    var transcriptContainer = document.getElementById('transcript-container');
+                    transcriptContainer.innerHTML += "<h2>" + data.title + "</h2>"
+                    var captions = data.captions;                    
+                    captions.forEach(caption => {
+                        const div = document.createElement('div');
+                        div.classList.add('caption-line');
+                        div.setAttribute('data-start', caption.start);
+                        div.innerHTML = caption.text;
+
+                        // Add event listener to jump to the caption time when clicked
+                        div.addEventListener('click', () => {
+                            console.log("Click line " + caption.start)
+                            // Get the time from the data attribute and seek to that time in the video
+                            const time = parseFloat(caption.start);
+                            video.contentWindow.postMessage(JSON.stringify({
+                                event: 'command',
+                                func: 'seekTo',
+                                args: [time, true]
+                            }), '*');
+                            // document.getElementById('video').src = "https://www.youtube.com/embed/" + id + "?start=" + time;
+                        });
+                        transcriptContainer.appendChild(div);
+                    });
+                })
+                .catch((error) => console.error(error));
+        }
+        var urlParams = new URLSearchParams(window.location.search);
+        var id = urlParams.get('v');
+        showVideo(id);
+        getTranscript(id);
+    </script>
+</body>
+</html>
