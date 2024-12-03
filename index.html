@@ -41,14 +41,42 @@
     }
 
     .caption-line {
-            cursor: pointer;
-            padding: 5px;
-            margin-bottom: 10px;
-            transition: background-color 0.2s;
-        }
+        cursor: pointer;
+        padding: 5px;
+        margin-bottom: 10px;
+        transition: background-color 0.2s;
+    }
 
     .caption-line:hover {
         background-color: #ddd;
+    }
+    .search-box {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        margin-bottom: 20px;
+    }
+
+    .search-box input[type="text"] {
+        padding: 8px;
+        border: none;
+        border-radius: 4px;
+        outline: none;
+        width: 500px;
+    }
+
+    .search-box button {
+        padding: 8px 12px;
+        border: none;
+        border-radius: 4px;
+        background-color: #555;
+        color: #fff;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    .search-box button:hover {
+        background-color: #777;
     }
 
     h2 {
@@ -63,6 +91,10 @@
     </style>
 </head>
 <body>
+    <div class="search-box">
+        <input type="text" id="searchInput" placeholder="Search">
+        <button onclick="searchVideo()">Search</button>
+    </div>
     <div class="container">
         <!-- YouTube Video -->
         <div id="video-container">
@@ -138,6 +170,15 @@
         }
         showVideo(id);
         getTranscript(id);
+
+        function searchVideo() {
+            var url = new URL(document.getElementById('searchInput').value);
+            console.log("Search:", url)
+            var urlParams = new URLSearchParams(url.search);
+            var id = urlParams.get('v');
+            if (!id) return;
+            window.location.search = "?v=" + id
+        }
     </script>
 </body>
 </html>
