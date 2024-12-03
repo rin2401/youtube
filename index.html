@@ -48,6 +48,11 @@
         width: 100% !important;
     }
 
+    .player {
+        aspect-ratio: 16 / 9;
+        width: 100% !important;
+    }
+
     .caption-line {
         cursor: pointer;
         padding: 5px;
@@ -106,22 +111,46 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-12 col-md-6" id="video-container">
-                <iframe id="video"
-                    src="" 
-                    title="YouTube video player" frameborder="0" 
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                    allowfullscreen>
-                </iframe>
+                <div class="player js-player" id="video" data-youtube-videoid="KFstP0C9sVk"></div>
             </div>
 
             <div class="col-12 col-md-6" id="transcript-container">
             </div>
         </div>
     </div>
+    <script src="player/html5-youtube.js"></script>
+    <script>
+    (function() {
+        var elPlayer = document.querySelector('.js-player');
+
+        var player = window.player = youtube({ el:elPlayer });
+
+        // Log event
+        var typeListener = function(event) {console.log(':'+event.type); };
+        player.addEventListener('onApiChange', typeListener);
+        player.addEventListener('onError', typeListener);
+        player.addEventListener('onPlaybackQualityChange', typeListener);
+        player.addEventListener('onPlaybackRateChange', typeListener);
+        player.addEventListener('onReady', typeListener);
+        player.addEventListener('onStateChange', typeListener);
+        player.addEventListener('error', typeListener);
+        player.addEventListener('emptied', typeListener);
+        player.addEventListener('canplay', typeListener);
+        player.addEventListener('canplaythrough', typeListener);
+        player.addEventListener('playing', typeListener);
+        player.addEventListener('ended', typeListener);
+        player.addEventListener('durationchange', typeListener);
+        player.addEventListener('timeupdate', typeListener);
+        player.addEventListener('play', typeListener);
+        player.addEventListener('pause', typeListener);
+        player.addEventListener('ratechange', typeListener);
+        player.addEventListener('volumechange', typeListener);
+    })();
+    </script>
     <script>
         function showVideo(id) {
             var video = document.getElementById('video');
-            video.src = "https://www.youtube.com/embed/" + id + "?autoplay=1";
+            video.setAttribute("data-youtube-videoid", id)
         }
 
         // var CORS_URL = "https://cors-nl0i.onrender.com/"
@@ -163,8 +192,9 @@
                         // Add event listener to jump to the caption time when clicked
                         div.addEventListener('click', () => {
                             console.log("Click line " + caption.start)
-                            const time = parseInt(caption.start);
-                            document.getElementById('video').src = "https://www.youtube.com/embed/" + id + "?start=" + time;
+                            const time = parseFloat(caption.start);
+                            player.currentTime = time;
+                            // document.getElementById('video').src = "https://www.youtube.com/embed/" + id + "?start=" + time;
                         });
                         transcriptContainer.appendChild(div);
                     });
