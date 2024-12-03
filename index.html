@@ -96,8 +96,7 @@
         <button onclick="searchVideo()">Search</button>
     </div>
     <div class="container">
-        <!-- YouTube Video -->
-        <div id="video-container">
+        <div class="col" id="video-container">
             <iframe id="video" width="100%" height="500px" 
                 src="" 
                 title="YouTube video player" frameborder="0" 
@@ -106,8 +105,7 @@
             </iframe>
         </div>
 
-        <!-- Transcript Section -->
-        <div id="transcript-container">
+        <div class="col" id="transcript-container">
         </div>
     </div>
     <script>
@@ -172,12 +170,20 @@
         getTranscript(id);
 
         function searchVideo() {
-            var url = new URL(document.getElementById('searchInput').value);
-            console.log("Search:", url)
-            var urlParams = new URLSearchParams(url.search);
-            var id = urlParams.get('v');
+            var text = document.getElementById('searchInput').value;
+            var id = text;
+            if (text.includes("http")) {
+                var url = new URL(text);
+                console.log("URL:", url);
+                if (url.host == "youtu.be") {
+                    id = url.pathname.substring(1);
+                } else {
+                    var urlParams = new URLSearchParams(url.search);
+                    id = urlParams.get('v');
+                }
+            }
             if (!id) return;
-            window.location.search = "?v=" + id
+            window.location.search = "?v=" + id;
         }
     </script>
 </body>
