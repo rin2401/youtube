@@ -124,6 +124,9 @@
             video.src = "https://www.youtube.com/embed/" + id + "?autoplay=1";
         }
 
+        // var CORS_URL = "https://cors-nl0i.onrender.com/"
+        var CORS_URL = "https://c0rs.up.railway.app/"
+
         function getTranscript(id) {
             const myHeaders = new Headers();
                 myHeaders.append("content-type", "application/json");
@@ -139,7 +142,7 @@
                     redirect: "follow"
                 };
 
-                fetch("https://cors-nl0i.onrender.com/https://tactiq-apps-prod.tactiq.io/transcript", requestOptions)
+                fetch(CORS_URL + "https://tactiq-apps-prod.tactiq.io/transcript", requestOptions)
                 .then((response) => response.text())
                 .then((result) => {
                     data = JSON.parse(result)
