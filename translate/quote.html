@@ -1,0 +1,190 @@
+<html>
+<head>
+    <title>Translate</title>
+    <style>
+        /* gg translate */
+        a.gflag {
+            vertical-align: middle;
+            font-size: 15px;
+            padding: 0px;
+            background-repeat: no-repeat;
+            background-image: url(//gtranslate.net/flags/16.png);
+        }
+
+        a.gflag img {
+            border: 0;
+        }
+
+        a.gflag:hover {
+            background-image: url(//gtranslate.net/flags/16a.png);
+        }
+
+        body {
+            top: 0 !important;
+        }
+
+        #goog-gt-tt {
+            display: none !important;
+        }
+
+        .goog-te-banner-frame {
+            display: none !important;
+        }
+
+        .goog-te-menu-value:hover {
+            text-decoration: none !important;
+        }
+
+        #google_translate_element {
+            display: none !important;
+        }
+
+        .skiptranslate {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <p>“I guess when you are young, you believe that you will meet many people with whom you'll connect with, but later in life you realize it only happens a few times.”</p>
+        <p class="notranslate">― Julie Delpy, Before Sunrise & Before Sunset: Two Screenplays</p>
+    </div>
+    <button onclick="translatePage()">Translate</button>
+    <p class="notranslate" id="lang">Lang: en<p>
+    <div id="google_translate_element"></div>
+    <script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+    <script>
+        function googleTranslateElementInit() {
+            new google.translate.TranslateElement({
+                pageLanguage: 'en'
+            },
+            'google_translate_element'
+            );
+        }
+        
+        const triggerEvent = (element, eventName) => {
+            const event = new Event(eventName);
+            element.dispatchEvent(event);
+        };
+        
+        function changeLanguage(lang) {
+            document.querySelector('.goog-te-combo').value = lang;
+            triggerEvent(document.querySelector('.goog-te-combo'), 'change');
+        }
+
+        languages = [
+            "af",
+            "sq",
+            "am",
+            "en",
+            "fa",
+            "ar",
+            "ps",
+            "ja",
+            "zh-CN",
+            "hy",
+            "az",
+            "eu",
+            "be",
+            "bn",
+            "bs",
+            "bg",
+            "ca",
+            "ceb",
+            "ny",
+            "zh-TW",
+            "co",
+            "hr",
+            "cs",
+            "da",
+            "nl",
+            "eo",
+            "et",
+            "tl",
+            "fi",
+            "fr",
+            "fy",
+            "gl",
+            "ka",
+            "de",
+            "el",
+            "gu",
+            "ht",
+            "ha",
+            "haw",
+            "iw",
+            "hi",
+            "hmn",
+            "hu",
+            "is",
+            "ig",
+            "id",
+            "ga",
+            "it",
+            "jw",
+            "kn",
+            "kk",
+            "km",
+            "ko",
+            "ku",
+            "ky",
+            "lo",
+            "la",
+            "lv",
+            "lt",
+            "lb",
+            "mk",
+            "mg",
+            "ms",
+            "ml",
+            "mt",
+            "mi",
+            "mr",
+            "mn",
+            "my",
+            "ne",
+            "no",
+            "pl",
+            "pt",
+            "pa",
+            "ro",
+            "ru",
+            "sm",
+            "gd",
+            "sr",
+            "st",
+            "sn",
+            "sd",
+            "si",
+            "sk",
+            "sl",
+            "so",
+            "es",
+            "su",
+            "sw",
+            "sv",
+            "tg",
+            "ta",
+            "te",
+            "th",
+            "tr",
+            "uk",
+            "ur",
+            "uz",
+            "vi",
+            "cy",
+            "xh",
+            "yi",
+            "yo",
+            "zu",
+        ]
+        var i = 0;
+        function translatePage() {
+            i = (i+1) % languages.length;
+            console.log("Translate to ", languages[i])
+            changeLanguage(languages[i]);
+            document.getElementById("lang").innerHTML = "Lang: " + languages[i]
+        }
+    </script>
+</body>
+</html>
