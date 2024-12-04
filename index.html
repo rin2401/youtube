@@ -104,7 +104,7 @@
     </style>
 </head>
 <body>
-    <div class="search-box">
+    <div class="search-box notranslate">
         <input type="text" id="searchInput" placeholder="Search">
         <button onclick="searchVideo()">Search</button>
     </div>
@@ -175,17 +175,19 @@
                 data = JSON.parse(result)
                 console.log(data)
                 var transcriptContainer = document.getElementById('transcript-container');
-                transcriptContainer.innerHTML += "<h2>" + data.title + "</h2>"
+                transcriptContainer.innerHTML += "<h2 class='notranslate'>" + data.title + "</h2>"
+                transcriptContainer.innerHTML += "<h2 class='caption-translate' style='display: none;'>" + data.title + "</h2>"
                 var captions = data.captions;                    
                 captions.forEach(caption => {
                     const div = document.createElement('div');
                     div.classList.add('caption-line');
                     div.setAttribute('data-start', caption.start);
-
+                    div.setAttribute('data-text', caption.text);
                     var time = new Date(parseInt(caption.start) * 1000).toISOString().slice(11, 19);
-
                     var text = caption.text.replace(/([a-z])([A-Z])/, "$1<br>$2");
-                    div.innerHTML = time + "<br>" + text;
+                    div.innerHTML = "<span class='notranslate'>" +  time + "</span>";
+                    div.innerHTML += "<br><span class='notranslate'>" + text + "</span>";
+                    div.innerHTML += "<span class='caption-translate' style='display: none;'>" + text + "</span>";
 
                     div.addEventListener('click', () => {
                         console.log("Click line " + caption.start)
@@ -263,6 +265,28 @@
         }
 
         player.addEventListener('timeupdate', scrollTranscript);
+
+        var observer = new MutationObserver(function (event) {
+            var elements = document.querySelectorAll('.caption-translate');
+            if(document.documentElement.className.match('translated')) {
+                console.log("Page translate");
+                elements.forEach(function(element) {
+                    element.style.display = 'block';
+                });
+            } else {
+                console.log("Page untranslate");
+                elements.forEach(function(element) {
+                    element.style.display = 'none';
+                });
+            }
+        });
+
+        observer.observe(document.documentElement, {
+            attributes: true,
+            attributeFilter: ['class'],
+            childList: false,
+            characterData: false
+        });
     </script>
 </body>
 </html>
