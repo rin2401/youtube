@@ -199,6 +199,14 @@
                         "div": div
                     });
                 });
+
+                captionItems.forEach((caption, i) => {
+                    if (i == captionItems.length - 1) {
+                        caption.end = caption.start + caption.dur;
+                    } else {
+                        caption.end = captionItems[i+1].start;
+                    }
+                });
             })
             .catch((error) => console.error(error));
         }
@@ -230,12 +238,13 @@
 
         var focusStart = 0;
         function scrollTranscript() {
+            var currentTime = player.currentTime;
             captionItems.map((caption) => {
-                if (player.currentTime >= caption.start && player.currentTime < caption.start + caption.dur) {
+                if (currentTime >= caption.start && currentTime < caption.end) {
                     if (caption.start == focusStart) {
                         return;
                     }
-                    console.log("scrollTranscript:", player.currentTime, caption.start, caption.text);
+                    console.log("scrollTranscript:", currentTime, caption.start, caption.text);
                     focusStart = caption.start;
                     var div = caption.div
                     div.scrollIntoView({
@@ -243,7 +252,6 @@
                         block: 'center',
                     });
                     div.style.backgroundColor = "#ddd";
-
                 } else {
                     caption.div.style.backgroundColor = "#fff";
                 }
