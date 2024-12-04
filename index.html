@@ -120,7 +120,6 @@
     </div>
     <script src="player/html5-youtube.js"></script>
     <script>
-    (function() {
         var elPlayer = document.querySelector('.js-player');
 
         var player = window.player = youtube({ el:elPlayer });
@@ -140,14 +139,12 @@
         player.addEventListener('playing', typeListener);
         player.addEventListener('ended', typeListener);
         player.addEventListener('durationchange', typeListener);
-        player.addEventListener('timeupdate', typeListener);
+        // player.addEventListener('timeupdate', typeListener);
         player.addEventListener('play', typeListener);
         player.addEventListener('pause', typeListener);
         player.addEventListener('ratechange', typeListener);
         player.addEventListener('volumechange', typeListener);
-    })();
-    </script>
-    <script>
+   
         function showVideo(id) {
             var video = document.getElementById('video');
             video.setAttribute("data-youtube-videoid", id)
@@ -156,56 +153,60 @@
         // var CORS_URL = "https://cors-nl0i.onrender.com/"
         var CORS_URL = "https://c0rs.up.railway.app/"
 
+        var captionItems = [];
         function getTranscript(id) {
             const myHeaders = new Headers();
-                myHeaders.append("content-type", "application/json");
-                const raw = JSON.stringify({
-                    "videoUrl": "https://www.youtube.com/watch?v=" + id,
-                    "langCode": "en"
-                });
+            myHeaders.append("content-type", "application/json");
+            const raw = JSON.stringify({
+                "videoUrl": "https://www.youtube.com/watch?v=" + id,
+                "langCode": "en"
+            });
 
-                const requestOptions = {
-                    method: "POST",
-                    headers: myHeaders,
-                    body: raw,
-                    redirect: "follow"
-                };
+            const requestOptions = {
+                method: "POST",
+                headers: myHeaders,
+                body: raw,
+                redirect: "follow"
+            };
 
-                fetch(CORS_URL + "https://tactiq-apps-prod.tactiq.io/transcript", requestOptions)
-                .then((response) => response.text())
-                .then((result) => {
-                    data = JSON.parse(result)
-                    console.log(data)
-                    var transcriptContainer = document.getElementById('transcript-container');
-                    transcriptContainer.innerHTML += "<h2>" + data.title + "</h2>"
-                    var captions = data.captions;                    
-                    captions.forEach(caption => {
-                        const div = document.createElement('div');
-                        div.classList.add('caption-line');
-                        div.setAttribute('data-start', caption.start);
+            fetch(CORS_URL + "https://tactiq-apps-prod.tactiq.io/transcript", requestOptions)
+            .then((response) => response.text())
+            .then((result) => {
+                data = JSON.parse(result)
+                console.log(data)
+                var transcriptContainer = document.getElementById('transcript-container');
+                transcriptContainer.innerHTML += "<h2>" + data.title + "</h2>"
+                var captions = data.captions;                    
+                captions.forEach(caption => {
+                    const div = document.createElement('div');
+                    div.classList.add('caption-line');
+                    div.setAttribute('data-start', caption.start);
 
-                        var time = new Date(parseInt(caption.start) * 1000).toISOString().slice(11, 19);
+                    var time = new Date(parseInt(caption.start) * 1000).toISOString().slice(11, 19);
+                    div.innerHTML = time + "<br>" + caption.text;
 
-
-                        div.innerHTML = time + "<br>" + caption.text;
-
-                        // Add event listener to jump to the caption time when clicked
-                        div.addEventListener('click', () => {
-                            console.log("Click line " + caption.start)
-                            const time = parseFloat(caption.start);
-                            player.currentTime = time;
-                            // document.getElementById('video').src = "https://www.youtube.com/embed/" + id + "?start=" + time;
-                        });
-                        transcriptContainer.appendChild(div);
+                    div.addEventListener('click', () => {
+                        console.log("Click line " + caption.start)
+                        const time = parseFloat(caption.start);
+                        player.currentTime = time;
                     });
-                })
-                .catch((error) => console.error(error));
+                    transcriptContainer.appendChild(div);
+
+                    captionItems.push({
+                        "start": parseFloat(caption.start),
+                        "dur": parseFloat(caption.dur),
+                        "text": caption.text,
+                        "div": div
+                    });
+                });
+            })
+            .catch((error) => console.error(error));
         }
 
         var urlParams = new URLSearchParams(window.location.search);
         var id = urlParams.get('v');
         if (!id) {
-            window.location.href += "?v=5MuIMqhT8DM";
+            window.location.href += "?v=1lNbOH-cvl8";
         }
         showVideo(id);
         getTranscript(id);
@@ -226,6 +227,30 @@
             if (!id) return;
             window.location.search = "?v=" + id;
         }
+
+        var focusStart = 0;
+        function scrollTranscript() {
+            captionItems.map((caption) => {
+                if (player.currentTime >= caption.start && player.currentTime < caption.start + caption.dur) {
+                    if (caption.start == focusStart) {
+                        return;
+                    }
+                    console.log("scrollTranscript:", player.currentTime, caption.start, caption.text);
+                    focusStart = caption.start;
+                    var div = caption.div
+                    div.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'center',
+                    });
+                    div.style.backgroundColor = "#ddd";
+
+                } else {
+                    caption.div.style.backgroundColor = "#fff";
+                }
+            })            
+        }
+
+        player.addEventListener('timeupdate', scrollTranscript);
     </script>
 </body>
 </html>
