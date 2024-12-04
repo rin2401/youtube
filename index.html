@@ -213,8 +213,10 @@
 
         var urlParams = new URLSearchParams(window.location.search);
         var id = urlParams.get('v');
+
+        var DEFAULT_ID = "RB-RcX5DS5A"
         if (!id) {
-            window.location.href += "?v=1lNbOH-cvl8";
+            window.location.href += "?v=" + DEFAULT_ID;
         }
         showVideo(id);
         getTranscript(id);
