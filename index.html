@@ -183,7 +183,9 @@
                     div.setAttribute('data-start', caption.start);
 
                     var time = new Date(parseInt(caption.start) * 1000).toISOString().slice(11, 19);
-                    div.innerHTML = time + "<br>" + caption.text;
+
+                    var text = caption.text.replace(/([a-z])([A-Z])/, "$1<br>$2");
+                    div.innerHTML = time + "<br>" + text;
 
                     div.addEventListener('click', () => {
                         console.log("Click line " + caption.start)
