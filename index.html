@@ -176,7 +176,6 @@
                 console.log(data)
                 var transcriptContainer = document.getElementById('transcript-container');
                 transcriptContainer.innerHTML += "<h2 class='notranslate'>" + data.title + "</h2>"
-                transcriptContainer.innerHTML += "<h2 class='caption-translate' style='display: none;'>" + data.title + "</h2>"
                 var captions = data.captions;                    
                 captions.forEach(caption => {
                     const div = document.createElement('div');
