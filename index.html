@@ -137,6 +137,7 @@
 <body>
     <div class="search-box notranslate">
         <img id="flag-btn" onclick="switchLanguage()" src="https://cdn.gtranslate.net/flags/svg/en.svg" height=32/>
+        <input class="form-check-input" type="checkbox" value="" id="speak">
         <input type="text" id="searchInput" placeholder="Search">
         <button onclick="searchVideo()">Search</button>
     </div>
@@ -386,7 +387,7 @@
         }
 
         function speak(text, lang) {
-            if (lang == "en") {
+            if (!document.getElementById("speak").checked) {
                 return;
             }
 
