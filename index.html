@@ -66,6 +66,7 @@
     .search-box {
         display: flex;
         justify-content: center;
+        align-items: center;
         gap: 10px;
         margin-bottom: 10px;
     }
@@ -135,7 +136,7 @@
 </head>
 <body>
     <div class="search-box notranslate">
-        <button onclick="switchLanguage()" id="lang-btn">vi</button>
+        <img id="flag-btn" onclick="switchLanguage()" src="https://cdn.gtranslate.net/flags/svg/vi.svg" height=32/>
         <input type="text" id="searchInput" placeholder="Search">
         <button onclick="searchVideo()">Search</button>
     </div>
@@ -188,7 +189,7 @@
             i = (i+1) % languages.length;
             console.log("Translate to", languages[i]);
             changeLanguage(languages[i]);
-            document.getElementById("lang-btn").innerHTML = languages[i].split("-")[0];
+            document.getElementById("flag-btn").src = "https://cdn.gtranslate.net/flags/svg/" + languages[i] + ".svg";
         }
 
     </script>
