@@ -386,6 +386,10 @@
         }
 
         function speak(text, lang) {
+            if (lang == "en") {
+                return;
+            }
+
             var voices = synth.getVoices()
             console.log("Speak", lang, ":", text)
             voiceURI = voiceURIs[lang];
