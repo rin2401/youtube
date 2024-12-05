@@ -102,9 +102,40 @@
         margin-bottom: 10px;
     }
     </style>
+    <style>
+        /* gg translate */
+        a.gflag {
+            vertical-align: middle;
+            font-size: 15px;
+            padding: 0px;
+            background-repeat: no-repeat;
+            background-image: url(//gtranslate.net/flags/16.png);
+        }
+
+        a.gflag img {
+            border: 0;
+        }
+
+        a.gflag:hover {
+            background-image: url(//gtranslate.net/flags/16a.png);
+        }
+
+        body {
+            top: 0 !important;
+        }
+
+        #goog-gt-tt, .goog-te-banner-frame, #google_translate_element, .skiptranslate {
+            display: none !important;
+        }
+
+        .goog-te-menu-value:hover {
+            text-decoration: none !important;
+        }
+    </style>
 </head>
 <body>
     <div class="search-box notranslate">
+        <button onclick="switchLanguage()" id="lang-btn">vi</button>
         <input type="text" id="searchInput" placeholder="Search">
         <button onclick="searchVideo()">Search</button>
     </div>
@@ -118,6 +149,49 @@
             </div>
         </div>
     </div>
+
+    <div id="google_translate_element"></div>
+    <script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+    <script>
+        function googleTranslateElementInit() {
+            new google.translate.TranslateElement({
+                    pageLanguage: 'auto'
+                },
+                'google_translate_element'
+            );
+        }
+        
+        const triggerEvent = (element, eventName) => {
+            const event = new Event(eventName);
+            element.dispatchEvent(event);
+        };
+        
+        function changeLanguage(lang) {
+            var elements = document.querySelectorAll('.caption-translate');
+
+            if (lang == "en") {
+                elements.forEach(function(element) {
+                    element.style.display = "none";
+                });
+            } else {
+                elements.forEach(function(element) {
+                    element.style.display = "block";
+                });
+                document.querySelector('.goog-te-combo').value = lang;
+                triggerEvent(document.querySelector('.goog-te-combo'), 'change');
+            }
+        }
+
+        var languages = ["vi", "en", "ja", "zh-CN", "fr"];
+        var i = 0;
+        function switchLanguage() {
+            i = (i+1) % languages.length;
+            console.log("Translate to", languages[i]);
+            changeLanguage(languages[i]);
+            document.getElementById("lang-btn").innerHTML = languages[i].split("-")[0];
+        }
+
+    </script>
     <script src="player/html5-youtube.js"></script>
     <script>
         var elPlayer = document.querySelector('.js-player');
@@ -201,7 +275,6 @@
                         "div": div
                     });
                 });
-
                 captionItems.forEach((caption, i) => {
                     if (i == captionItems.length - 1) {
                         caption.end = caption.start + caption.dur;
@@ -209,6 +282,7 @@
                         caption.end = captionItems[i+1].start;
                     }
                 });
+                changeLanguage("vi");
             })
             .catch((error) => console.error(error));
         }
@@ -264,27 +338,32 @@
 
         player.addEventListener('timeupdate', scrollTranscript);
 
-        var observer = new MutationObserver(function (event) {
-            var elements = document.querySelectorAll('.caption-translate');
-            if(document.documentElement.className.match('translated')) {
-                console.log("Page translate");
-                elements.forEach(function(element) {
-                    element.style.display = 'block';
-                });
-            } else {
-                console.log("Page untranslate");
-                elements.forEach(function(element) {
-                    element.style.display = 'none';
-                });
-            }
-        });
+        // function showTranslate() {
+        //     var elements = document.querySelectorAll('.caption-translate');
+        //     if(document.documentElement.className.match('translated')) {
+        //         console.log("Page translate");
+        //         elements.forEach(function(element) {
+        //             element.style.display = 'block';
+        //         });
+        //     } else {
+        //         console.log("Page untranslate");
+        //         elements.forEach(function(element) {
+        //             element.style.display = 'none';
+        //         });
+        //     }
+        // }
 
-        observer.observe(document.documentElement, {
-            attributes: true,
-            attributeFilter: ['class'],
-            childList: false,
-            characterData: false
-        });
+        // var observer = new MutationObserver(function (event) {
+        //     console.log("zz:observer");
+        //     showTranslate();
+        // });
+
+        // observer.observe(document.documentElement, {
+        //     attributes: true,
+        //     attributeFilter: ['class'],
+        //     childList: false,
+        //     characterData: false
+        // });
     </script>
 </body>
 </html>
