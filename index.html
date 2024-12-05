@@ -136,7 +136,7 @@
 </head>
 <body>
     <div class="search-box notranslate">
-        <img id="flag-btn" onclick="switchLanguage()" src="https://cdn.gtranslate.net/flags/svg/vi.svg" height=32/>
+        <img id="flag-btn" onclick="switchLanguage()" src="https://cdn.gtranslate.net/flags/svg/en.svg" height=32/>
         <input type="text" id="searchInput" placeholder="Search">
         <button onclick="searchVideo()">Search</button>
     </div>
@@ -156,7 +156,7 @@
     <script>
         function googleTranslateElementInit() {
             new google.translate.TranslateElement({
-                    pageLanguage: 'auto'
+                    pageLanguage: 'en'
                 },
                 'google_translate_element'
             );
@@ -183,7 +183,7 @@
             }
         }
 
-        var languages = ["vi", "en", "ja", "zh-CN", "fr"];
+        var languages = ["en","vi", "ja", "zh-CN", "fr"];
         var i = 0;
         function switchLanguage() {
             i = (i+1) % languages.length;
@@ -283,7 +283,7 @@
                         caption.end = captionItems[i+1].start;
                     }
                 });
-                changeLanguage("vi");
+                // changeLanguage("vi");
             })
             .catch((error) => console.error(error));
         }
