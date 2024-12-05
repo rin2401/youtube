@@ -153,46 +153,6 @@
 
     <div id="google_translate_element"></div>
     <script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
-    <script>
-        function googleTranslateElementInit() {
-            new google.translate.TranslateElement({
-                    pageLanguage: 'en'
-                },
-                'google_translate_element'
-            );
-        }
-        
-        const triggerEvent = (element, eventName) => {
-            const event = new Event(eventName);
-            element.dispatchEvent(event);
-        };
-        
-        function changeLanguage(lang) {
-            var elements = document.querySelectorAll('.caption-translate');
-
-            if (lang == "en") {
-                elements.forEach(function(element) {
-                    element.style.display = "none";
-                });
-            } else {
-                elements.forEach(function(element) {
-                    element.style.display = "block";
-                });
-                document.querySelector('.goog-te-combo').value = lang;
-                triggerEvent(document.querySelector('.goog-te-combo'), 'change');
-            }
-        }
-
-        var languages = ["en","vi", "ja", "zh-CN", "fr"];
-        var i = 0;
-        function switchLanguage() {
-            i = (i+1) % languages.length;
-            console.log("Translate to", languages[i]);
-            changeLanguage(languages[i]);
-            document.getElementById("flag-btn").src = "https://cdn.gtranslate.net/flags/svg/" + languages[i] + ".svg";
-        }
-
-    </script>
     <script src="player/html5-youtube.js"></script>
     <script>
         var elPlayer = document.querySelector('.js-player');
@@ -291,7 +251,7 @@
         var urlParams = new URLSearchParams(window.location.search);
         var id = urlParams.get('v');
 
-        var DEFAULT_ID = "RB-RcX5DS5A"
+        var DEFAULT_ID = "1lNbOH-cvl8"
         if (!id) {
             window.location.href += "?v=" + DEFAULT_ID;
         }
@@ -331,6 +291,14 @@
                         block: 'center',
                     });
                     div.style.backgroundColor = "#ddd";
+
+                    var translateText = caption.text
+                    if (currentLang != "en") {
+                        translateText = div.querySelector('.caption-translate').textContent;
+                    }
+                    console.log("translateText:", translateText);
+
+                    speak(translateText, currentLang)
                 } else {
                     caption.div.style.backgroundColor = "#fff";
                 }
@@ -365,6 +333,95 @@
         //     childList: false,
         //     characterData: false
         // });
+    </script>
+    <script>
+        function googleTranslateElementInit() {
+            new google.translate.TranslateElement({
+                    pageLanguage: 'en'
+                },
+                'google_translate_element'
+            );
+        }
+        
+        const triggerEvent = (element, eventName) => {
+            const event = new Event(eventName);
+            element.dispatchEvent(event);
+        };
+        
+        function changeLanguage(lang) {
+            var elements = document.querySelectorAll('.caption-translate');
+
+            if (lang == "en") {
+                elements.forEach(function(element) {
+                    element.style.display = "none";
+                });
+            } else {
+                elements.forEach(function(element) {
+                    element.style.display = "block";
+                });
+                document.querySelector('.goog-te-combo').value = lang;
+                triggerEvent(document.querySelector('.goog-te-combo'), 'change');
+            }
+        }
+
+        var languages = ["en", "vi", "ja", "zh-CN", "fr"];
+        var i = 0;
+        var currentLang = "en";
+        function switchLanguage() {
+            i = (i+1) % languages.length;
+            console.log("Translate to", languages[i]);
+            changeLanguage(languages[i]);
+            document.getElementById("flag-btn").src = "https://cdn.gtranslate.net/flags/svg/" + languages[i] + ".svg";
+            currentLang = languages[i]
+        }
+    </script>
+    <script>
+        const synth = window.speechSynthesis;
+        var voiceURIs = {
+            "en": "Daniel (English (United Kingdom))",
+            "vi": "Linh",
+            "ja": "Eddy (Japanese (Japan))",
+            "zh-CN": "Li-Mu",
+            "fr": "Daniel (French (France)"
+        }
+
+        function speak(text, lang) {
+            var voices = synth.getVoices()
+            console.log("Speak", lang, ":", text)
+            voiceURI = voiceURIs[lang];
+            if (synth.speaking) {
+                console.error("speechSynthesis.speaking");
+                return;
+            }
+
+            if (text !== "") {
+                const utterThis = new SpeechSynthesisUtterance(text);
+
+                utterThis.onend = function (event) {
+                    console.log("SpeechSynthesisUtterance.onend");
+                };
+
+                utterThis.onerror = function (event) {
+                    console.error("SpeechSynthesisUtterance.onerror");
+                };
+
+                for (let i = 0; i < voices.length; i++) {
+                    if (voices[i].voiceURI == voiceURI) {
+                        utterThis.voice = voices[i];
+                        break;
+                    }
+                }
+                console.log(lang, voiceURI, utterThis.voice);
+
+                utterThis.pitch = 1;
+                if (lang == "en" || lang == "fr") {
+                    utterThis.rate = 1;
+                } else {
+                    utterThis.rate = 1.8;
+                }
+                synth.speak(utterThis);
+            }
+        }
     </script>
 </body>
 </html>
