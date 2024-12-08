@@ -306,7 +306,14 @@
             })            
         }
 
+        function loopVideo() {
+            if (player.currentTime >= player.duration) {
+                player.currentTime = 0;
+            }
+        }
+
         player.addEventListener('timeupdate', scrollTranscript);
+        player.addEventListener('timeupdate', loopVideo);
 
         // function showTranslate() {
         //     var elements = document.querySelectorAll('.caption-translate');
